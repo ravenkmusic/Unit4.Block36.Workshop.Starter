@@ -22,6 +22,15 @@ app.get('/', (req, res)=> res.sendFile(path.join(__dirname, '../client/dist/inde
 app.use('/assets', express.static(path.join(__dirname, '../client/dist/assets'))); 
 
 
+const isLoggedIn = async(req, res, next)=>{
+  try {
+    req.user = await findUserWithToken(req.headers.authorization);
+    next();
+  } catch (error) {
+    next(error);
+  }
+};
+
 app.post('/api/auth/login', async(req, res, next)=> {
   try {
     res.send(await authenticate(req.body));
