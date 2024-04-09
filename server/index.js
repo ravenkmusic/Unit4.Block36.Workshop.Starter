@@ -26,10 +26,19 @@ const isLoggedIn = async(req, res, next)=>{
   try {
     req.user = await findUserWithToken(req.headers.authorization);
     next();
-  } catch (error) {
-    next(error);
+  } catch (ex) {
+    next(ex);
   }
 };
+
+//route to register
+app.post('api/users', async(req, res, next) => {
+  try {
+    res.status(201).send(await createUser(req.body));
+  } catch (ex) {
+    next(ex);
+  }
+});
 
 app.post('/api/auth/login', async(req, res, next)=> {
   try {
