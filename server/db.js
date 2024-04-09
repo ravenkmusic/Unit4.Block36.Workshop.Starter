@@ -29,7 +29,7 @@ const createTables = async()=> {
   await client.query(SQL);
 };
 
-const createUser = async({ username, password})=> {
+const createUser = async({ username, password })=> {
   const SQL = `
     INSERT INTO users(id, username, password) VALUES($1, $2, $3) RETURNING *
   `;
