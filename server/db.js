@@ -75,21 +75,6 @@ const authenticate = async({ username, password })=> {
   return { token: response.rows[0].id };
 };
 
-//register new user
-
-const registerNewUser = async ({username, password}) => {
-  const response = await createUser({
-    username: username,
-    password: password,
-  });
-  if (!response.id){
-    const error = Error("Not authorized");
-    error.status = 401;
-    throw error;
-  }
-  const token = jwt.sign({id: response.id}, JWT);
-  return {token};
-}
 
 //passes in user token so that only the user sees user info
 const findUserWithToken = async(token)=> {
@@ -149,6 +134,5 @@ module.exports = {
   createFavorite,
   destroyFavorite,
   authenticate,
-  findUserWithToken,
-  registerNewUser
+  findUserWithToken
 };
