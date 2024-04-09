@@ -123,6 +123,21 @@ const fetchFavorites = async(user_id)=> {
   return response.rows;
 };
 
+const registerUser = async ({ username, password }) => {
+  const response = await createUser({
+      username: username,
+      password: password,
+  });
+  if (!response.id) {
+      const error = Error("not authorized");
+      error.status = 401;
+      throw error;
+  }
+
+  const token = jwt.sign({ id: response.id }, JWT);
+  return { token };
+};
+
 module.exports = {
   client,
   createTables,
@@ -134,5 +149,6 @@ module.exports = {
   createFavorite,
   destroyFavorite,
   authenticate,
-  findUserWithToken
+  findUserWithToken,
+  registerUser
 };

@@ -9,7 +9,8 @@ const {
   fetchFavorites,
   destroyFavorite,
   authenticate,
-  findUserWithToken
+  findUserWithToken,
+  registerUser
 } = require('./db');
 const express = require('express');
 const app = express();
@@ -33,7 +34,7 @@ const isLoggedIn = async(req, res, next)=>{
 //route to register
 app.post('/api/auth/register', async(req, res, next) => {
   try {
-    res.send(await createUser(req.body));
+    res.send(await registerUser(req.body));
   } catch (ex) {
     next(ex);
   }

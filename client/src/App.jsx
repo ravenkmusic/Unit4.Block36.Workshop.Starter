@@ -1,27 +1,24 @@
 import { useState, useEffect } from "react"
 
-const Login = ({ login, register })=> {
+const Login = ({ login })=> {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
-  const submit = (ev) => {
+  const submitLogin = (ev) => {
     ev.preventDefault();
-    if (document.activeElement.value === "login") {
-      login({ username, password });
-    } else if (document.activeElement === "register") {
-      register({ username, password });
-    }
-  };
-
-  return (
-    <form onSubmit={ submit }>
+    login({ username, password });
+  }
+  return ( <>
+    <form onSubmit={ submitLogin}>
       <input value={ username } placeholder="username" onChange={ (ev)=> setUsername(ev.target.value) }/>
       <input value={ password } type= "password" placeholder="password" onChange={ (ev)=> setPassword(ev.target.value) }/>
       <button disabled={ !username || !password } name="login" value="login">Login</button>
-      <button disabled={!username || !password} name="register" value="register">Register</button>
+
     </form>
-  );
-}
+    </>
+  ); 
+}  
+
 
 function App() {
   const [auth, setAuth] = useState({});
@@ -81,15 +78,14 @@ function App() {
     }
   }, [auth]);
 
-  const register = async (credentials) => {
-    setMessage("");
-    const response = await fetch("/api/auth/register", {
-        method: "POST",
-        body: JSON.stringify(credentials),
-        headers: {
-            "Content-Type": "application/json",
-        },
-    });
+    const register = async ({username, password}) => {
+      const response = await fetch("/api/auth/register", {
+      method: "POST",
+      body: JSON.stringify(username, password),
+      headers: {
+          "Content-Type": "application/json",
+      },
+  });
 
     const json = await response.json();
     if (response.ok) {
