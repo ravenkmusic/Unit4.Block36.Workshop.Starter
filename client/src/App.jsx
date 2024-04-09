@@ -16,7 +16,7 @@ const Login = ({ login, register })=> {
   return (
     <form onSubmit={ submit }>
       <input value={ username } placeholder='username' onChange={ ev=> setUsername(ev.target.value)}/>
-      <input value={ password} placeholder='password' onChange={ ev=> setPassword(ev.target.value)}/>
+      <input value={ password} type= 'password' placeholder='password' onChange={ ev=> setPassword(ev.target.value)}/>
       <button disabled={ !username || !password }>Login</button>
       <button disabled={!username || !password} name="register" value="register">Register</button>
     </form>
