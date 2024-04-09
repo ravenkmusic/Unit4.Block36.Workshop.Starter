@@ -75,6 +75,7 @@ const authenticate = async({ username, password })=> {
   return { token: response.rows[0].id };
 };
 
+//passes in user token so that only the user sees user info
 const findUserWithToken = async(token)=> {
   let id;
   try{
