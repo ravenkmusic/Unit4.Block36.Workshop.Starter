@@ -49,9 +49,9 @@ app.post('/api/auth/login', async(req, res, next)=> {
   }
 });
 
-app.get('/api/auth/me', async(req, res, next)=> {
+app.get('/api/auth/me', isLoggedIn, async(req, res, next)=> {
   try {
-    res.send(await findUserWithToken(req.headers.authorization));
+    res.send(req.user);
   }
   catch(ex){
     next(ex);
