@@ -1,18 +1,24 @@
 import { useState, useEffect } from 'react'
 
-const Login = ({ login })=> {
+const Login = ({ login, register })=> {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
   const submit = ev => {
     ev.preventDefault();
-    login({ username, password });
-  }
+    if (document.activeElement.value === "login") {
+      login({ username, password });
+    } else if (document.activeElement === "register") {
+      register({ username, password });
+    }
+  };
+
   return (
     <form onSubmit={ submit }>
       <input value={ username } placeholder='username' onChange={ ev=> setUsername(ev.target.value)}/>
       <input value={ password} placeholder='password' onChange={ ev=> setPassword(ev.target.value)}/>
       <button disabled={ !username || !password }>Login</button>
+      <button disabled={!username || !password} name="register" value="register">Register</button>
     </form>
   );
 }
@@ -21,6 +27,7 @@ function App() {
   const [auth, setAuth] = useState({});
   const [products, setProducts] = useState([]);
   const [favorites, setFavorites] = useState([]);
+  const [message, setMessage] = useState('');
 
   useEffect(()=> {
     attemptLoginWithToken();
@@ -70,7 +77,28 @@ function App() {
     }
   }, [auth]);
 
+  const register = async (credentials) => {
+    setMessage("");
+    const response = await fetch("/api/auth/register", {
+        method: "POST",
+        body: JSON.stringify(credentials),
+        headers: {
+            "Content-Type": "application/json",
+        },
+    });
+
+    const json = await response.json();
+    if (response.ok) {
+        window.localStorage.setItem("token", json.token);
+        attemptLoginWithToken();
+    } else {
+        console.log(json);
+        setMessage(json.error);
+    }
+};
+
   const login = async(credentials)=> {
+    setMessage("");
     const response = await fetch('/api/auth/login', {
       method: 'POST',
       body: JSON.stringify(credentials),
@@ -86,10 +114,12 @@ function App() {
     }
     else {
       console.log(json);
+      setMessage(json.error);
     }
   };
 
   const addFavorite = async(product_id)=> {
+    setMessage("");
     const response = await fetch(`/api/users/${auth.id}/favorites`, {
       method: 'POST',
       body: JSON.stringify({ product_id }),
@@ -104,32 +134,41 @@ function App() {
     }
     else {
       console.log(json);
+      setMessage(json.error);
     }
   }
 
   const removeFavorite = async(id)=> {
+    setMessage("");
     const response = await fetch(`/api/users/${auth.id}/favorites/${id}`, {
       method: 'DELETE',
+      headers: {authorization: window.localStorage.getItem("token")},
     });
+
+    const json = await response.json();
 
     if(response.ok){
       setFavorites(favorites.filter(favorite => favorite.id !== id));
     }
     else {
       console.log(json);
+      setMessage(json.error);
     }
   }
 
   const logout = ()=> {
     window.localStorage.removeItem('token');
     setAuth({});
+    setMessage("");
   };
 
   return (
     <>
       {
-        !auth.id ? <Login login={ login }/> : <button onClick={ logout }>Logout { auth.username }</button>
-      }
+        !auth.id ? (<Login login={ login } register={{register}}/> 
+      ) : (
+        <button onClick={ logout }>Logout { auth.username }</button>
+      )}
       <ul>
         {
           products.map( product => {
@@ -148,6 +187,11 @@ function App() {
           })
         }
       </ul>
+      {message !== "" && (
+        <div>
+          <h3>{message}</h3>
+        </div>
+      )}
     </>
   )
 }
