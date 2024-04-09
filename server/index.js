@@ -1,4 +1,3 @@
-const { error } = require('console');
 const {
   client,
   createTables,
@@ -25,6 +24,7 @@ app.use('/assets', express.static(path.join(__dirname, '../client/dist/assets'))
 const isLoggedIn = async(req, res, next)=>{
   try {
     req.user = await findUserWithToken(req.headers.authorization);
+    console.log(req.user);
     next();
   } catch (ex) {
     next(ex);
@@ -49,7 +49,7 @@ app.post('/api/auth/login', async(req, res, next)=> {
   }
 });
 
-app.get('/api/auth/me', isLoggedIn, async(req, res, next)=> {
+app.get('/api/auth/me', async(req, res, next)=> {
   try {
     res.send(req.user);
   }
@@ -84,9 +84,9 @@ app.get('/api/users/:id/favorites', isLoggedIn, async(req, res, next)=> {
 app.post('/api/users/:id/favorites', isLoggedIn, async(req, res, next)=> {
   try {
     if (req.params.id !== req.user.id){
-      const error = Error('Not authorized.');
-      error.status = 401;
-      throw error;
+        const error = Error('Not authorized.');
+        error.status = 401;
+        throw error;
       }
       res.status(201).send(await createFavorite({ user_id: req.params.id, product_id: req.body.product_id}));
     } catch(ex){
