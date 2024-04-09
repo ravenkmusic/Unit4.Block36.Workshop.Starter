@@ -83,7 +83,7 @@ function App() {
 
   const register = async (credentials) => {
     setMessage("");
-    const response = await fetch("/api/users/register", {
+    const response = await fetch("/api/auth/register", {
         method: "POST",
         body: JSON.stringify(credentials),
         headers: {
