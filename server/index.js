@@ -9,7 +9,8 @@ const {
   fetchFavorites,
   destroyFavorite,
   authenticate,
-  findUserWithToken
+  findUserWithToken,
+  registerNewUser
 } = require('./db');
 const express = require('express');
 const app = express();
