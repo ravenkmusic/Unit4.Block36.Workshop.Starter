@@ -63,7 +63,7 @@ const authenticate = async({ username, password })=> {
     SELECT id, username FROM users WHERE username=$1;
   `;
   const response = await client.query(SQL, [username]);
-  if(!response.rows.length){
+  if(!response.rows.length || (await bcrypt.compare(password, response.rows[0].password)) ==false){
     const error = Error('not authorized');
     error.status = 401;
     throw error;
@@ -71,7 +71,7 @@ const authenticate = async({ username, password })=> {
   return { token: response.rows[0].id };
 };
 
-const findUserWithToken = async(id)=> {
+const findUserWithToken = async(token)=> {
   const SQL = `
     SELECT id, username FROM users WHERE id=$1;
   `;
