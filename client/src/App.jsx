@@ -1,8 +1,8 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect } from "react"
 
 const Login = ({ login, register })=> {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
 
   const submit = ev => {
     ev.preventDefault();
@@ -15,8 +15,8 @@ const Login = ({ login, register })=> {
 
   return (
     <form onSubmit={ submit }>
-      <input value={ username } placeholder='username' onChange={ ev=> setUsername(ev.target.value)}/>
-      <input value={ password} type= 'password' placeholder='password' onChange={ ev=> setPassword(ev.target.value)}/>
+      <input value={ username } placeholder="username" onChange={ ev=> setUsername(ev.target.value)}/>
+      <input value={ password} type= "password" placeholder="password" onChange={ ev=> setPassword(ev.target.value)}/>
       <button disabled={ !username || !password }>Login</button>
       <button disabled={!username || !password} name="register" value="register">Register</button>
     </form>
@@ -27,18 +27,18 @@ function App() {
   const [auth, setAuth] = useState({});
   const [products, setProducts] = useState([]);
   const [favorites, setFavorites] = useState([]);
-  const [message, setMessage] = useState('');
+  const [message, setMessage] = useState("");
 
   useEffect(()=> {
     attemptLoginWithToken();
   }, []);
 
   const attemptLoginWithToken = async()=> {
-    const token = window.localStorage.getItem('token');
+    const token = window.localStorage.getItem("token");
     if(token){
       const response = await fetch(`/api/auth/me`, {
         headers: {
-          authorization: token
+          authorization: token,
         }
       });
       const json = await response.json();
@@ -46,14 +46,14 @@ function App() {
         setAuth(json);
       }
       else {
-        window.localStorage.removeItem('token');
+        window.localStorage.removeItem("token");
       }
     }
   };
 
   useEffect(()=> {
     const fetchProducts = async()=> {
-      const response = await fetch('/api/products');
+      const response = await fetch("/api/products");
       const json = await response.json();
       setProducts(json);
     };
@@ -63,7 +63,11 @@ function App() {
 
   useEffect(()=> {
     const fetchFavorites = async()=> {
-      const response = await fetch(`/api/users/${auth.id}/favorites`);
+      const response = await fetch(`/api/users/${auth.id}/favorites`, {
+        headers: {
+          authorization: window.localStorage.getItem("token"),
+        }
+      });
       const json = await response.json();
       if(response.ok){
         setFavorites(json);
@@ -99,20 +103,19 @@ function App() {
 
   const login = async(credentials)=> {
     setMessage("");
-    const response = await fetch('/api/auth/login', {
-      method: 'POST',
+    const response = await fetch("/api/auth/login", {
+      method: "POST",
       body: JSON.stringify(credentials),
       headers: {
-        'Content-Type': 'application/json'
+        "Content-Type": "application/json"
       }
     });
 
     const json = await response.json();
     if(response.ok){
-      window.localStorage.setItem('token', json.token);
+      window.localStorage.setItem("token", json.token);
       attemptLoginWithToken();
-    }
-    else {
+    } else {
       console.log(json);
       setMessage(json.error);
     }
@@ -121,10 +124,11 @@ function App() {
   const addFavorite = async(product_id)=> {
     setMessage("");
     const response = await fetch(`/api/users/${auth.id}/favorites`, {
-      method: 'POST',
+      method: "POST",
       body: JSON.stringify({ product_id }),
       headers: {
-        'Content-Type': 'application/json'
+        "Content-Type": "application/json",
+        authorization: window.localStorage.getItem("token"),
       }
     });
 
@@ -141,7 +145,7 @@ function App() {
   const removeFavorite = async(id)=> {
     setMessage("");
     const response = await fetch(`/api/users/${auth.id}/favorites/${id}`, {
-      method: 'DELETE',
+      method: "DELETE",
       headers: {authorization: window.localStorage.getItem("token")},
     });
 
@@ -157,7 +161,7 @@ function App() {
   }
 
   const logout = ()=> {
-    window.localStorage.removeItem('token');
+    window.localStorage.removeItem("token");
     setAuth({});
     setMessage("");
   };
@@ -174,7 +178,7 @@ function App() {
           products.map( product => {
             const isFavorite = favorites.find(favorite => favorite.product_id === product.id);
             return (
-              <li key={ product.id } className={ isFavorite ? 'favorite': ''}>
+              <li key={ product.id } className={ isFavorite ? "favorite": ""}>
                 { product.name }
                 {
                   auth.id && isFavorite && <button onClick={()=> removeFavorite(isFavorite.id)}>-</button>
