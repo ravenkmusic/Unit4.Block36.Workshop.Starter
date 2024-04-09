@@ -15,8 +15,8 @@ const Login = ({ login, register })=> {
 
   return (
     <form onSubmit={ submit }>
-      <input value={ username } placeholder="username" onChange={ (ev)=> setUsername(ev.target.value)}/>
-      <input value={ password} type= "password" placeholder="password" onChange={ (ev)=> setPassword(ev.target.value)}/>
+      <input value={ username } placeholder="username" onChange={ (ev)=> setUsername(ev.target.value) }/>
+      <input value={ password } type= "password" placeholder="password" onChange={ (ev)=> setPassword(ev.target.value) }/>
       <button disabled={ !username || !password } name="login" value="login">Login</button>
       <button disabled={!username || !password} name="register" value="register">Register</button>
     </form>
@@ -83,7 +83,7 @@ function App() {
 
   const register = async (credentials) => {
     setMessage("");
-    const response = await fetch("/api/auth/register", {
+    const response = await fetch("/api/users/register", {
         method: "POST",
         body: JSON.stringify(credentials),
         headers: {
