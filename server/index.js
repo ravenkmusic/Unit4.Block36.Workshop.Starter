@@ -1,3 +1,4 @@
+const { error } = require('console');
 const {
   client,
   createTables,
@@ -48,8 +49,13 @@ app.get('/api/users', async(req, res, next)=> {
   }
 });
 
-app.get('/api/users/:id/favorites', async(req, res, next)=> {
+app.get('/api/users/:id/favorites', isLoggedIn, async(req, res, next)=> {
   try {
+    if (req.params.id !== req.user.id){
+      const error = Error('Not authorized.');
+      error.status = 401;
+      throw error;
+    }
     res.send(await fetchFavorites(req.params.id));
   }
   catch(ex){
