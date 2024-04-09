@@ -24,7 +24,6 @@ app.use('/assets', express.static(path.join(__dirname, '../client/dist/assets'))
 const isLoggedIn = async(req, res, next)=>{
   try {
     req.user = await findUserWithToken(req.headers.authorization);
-    console.log(req.user);
     next();
   } catch (ex) {
     next(ex);
@@ -49,7 +48,7 @@ app.post('/api/auth/login', async(req, res, next)=> {
   }
 });
 
-app.get('/api/auth/me', async(req, res, next)=> {
+app.get('/api/auth/me', isLoggedIn, async(req, res, next)=> {
   try {
     res.send(req.user);
   }

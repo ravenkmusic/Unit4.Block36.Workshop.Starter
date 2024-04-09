@@ -4,7 +4,7 @@ const Login = ({ login, register })=> {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
-  const submit = ev => {
+  const submit = (ev) => {
     ev.preventDefault();
     if (document.activeElement.value === "login") {
       login({ username, password });
@@ -15,9 +15,9 @@ const Login = ({ login, register })=> {
 
   return (
     <form onSubmit={ submit }>
-      <input value={ username } placeholder="username" onChange={ ev=> setUsername(ev.target.value)}/>
-      <input value={ password} type= "password" placeholder="password" onChange={ ev=> setPassword(ev.target.value)}/>
-      <button disabled={ !username || !password }>Login</button>
+      <input value={ username } placeholder="username" onChange={ (ev)=> setUsername(ev.target.value)}/>
+      <input value={ password} type= "password" placeholder="password" onChange={ (ev)=> setPassword(ev.target.value)}/>
+      <button disabled={ !username || !password } name="login" value="login">Login</button>
       <button disabled={!username || !password} name="register" value="register">Register</button>
     </form>
   );
@@ -108,7 +108,7 @@ function App() {
       body: JSON.stringify(credentials),
       headers: {
         "Content-Type": "application/json"
-      }
+      },
     });
 
     const json = await response.json();
@@ -169,7 +169,7 @@ function App() {
   return (
     <>
       {
-        !auth.id ? (<Login login={ login } register={{register}}/> 
+        !auth.id ? (<Login login={ login } register={register}/> 
       ) : (
         <button onClick={ logout }>Logout { auth.username }</button>
       )}
